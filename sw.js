@@ -1,5 +1,5 @@
 // Shrinkray service worker: precache the app shell so it works offline; refresh in the background.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `shrinkray-${VERSION}`;
 const SHELL = ['./', 'index.html', 'styles.css', 'app.js', 'plan.js', 'shrink.js', 'vendor/mediabunny.min.mjs', 'icon.svg', 'manifest.webmanifest'];
 

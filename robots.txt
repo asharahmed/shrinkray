@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://asharahmed.github.io/shrinkray/sitemap.xml
