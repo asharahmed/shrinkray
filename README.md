@@ -1,62 +1,69 @@
 # Shrinkray
 
-**Compress video in your browser. No upload, no account, no watermark, no size limit.**
+Compresses a video to a target file size in the browser. The file is not uploaded anywhere.
 
-**→ https://asharahmed.github.io/shrinkray/**
+https://asharahmed.github.io/shrinkray/
 
-![Shrinkray: 96.2 MB → 9.22 MB, 1080p, 2.3 s on your device](docs/shot-result.png)
+![Shrinkray result: 96.2 MB to 9.22 MB at 1080p](docs/shot-result.png)
 
-Pick a target — 10 MB for Discord, 18 MB for email, or any number — drop in a video, download the result.
-The whole thing runs on your device using WebCodecs (your browser's hardware video encoder), so a
-300 MB clip doesn't have to crawl up your connection to some server first, and nobody else ever holds your file.
+Choose a size limit (10 MB for Discord, 18 MB for email, or a number you type), add a video, and download the
+result as an MP4. Encoding uses WebCodecs, so it runs on the GPU in most browsers. A 160 MB, 20-second 1080p clip
+takes about 5 seconds on an M1 MacBook.
 
 ## How it works
 
-1. **Read.** The file is parsed in the browser with [mediabunny](https://mediabunny.dev) — container, tracks, frame rate, duration.
-2. **Plan.** `plan.js` turns the target size into a bitrate budget, sizes the audio to it, and steps down the
-   resolution ladder (or halves 60 fps) only when the bits-per-pixel would otherwise fall below a quality floor.
-3. **Encode.** mediabunny drives `VideoDecoder` → `VideoEncoder` (H.264 by default, HEVC/AV1 optional) and
-   muxes a fast-start MP4 with AAC audio. If the encoder overshoots the target, the bitrate is tightened and
-   it goes again — up to three passes.
+1. The file is parsed in the browser with [mediabunny](https://mediabunny.dev): container, tracks, frame rate, duration.
+2. `plan.js` converts the size limit into a bitrate. Audio gets a share of the budget based on how much is
+   available. If the video bitrate would be too low for the source resolution, the output is scaled to the next
+   standard height. 60 fps sources are reduced to 30 fps only when the budget requires it.
+3. mediabunny decodes and re-encodes the video (H.264 by default; HEVC and AV1 are options) and writes a
+   fast-start MP4 with AAC audio. The first pass aims 7% under the limit. If the output is still too large, the
+   bitrate is reduced and the file is encoded again, up to three passes. If the hardware encoder fails, the
+   software encoder is used.
 
-Everything is plain ES modules, no build step. `plan.js` is pure and unit-tested; `shrink.js` is the engine; `app.js` is the UI.
+There is no build step. `plan.js` is the planning code and has unit tests. `shrink.js` is the encoding code.
+`app.js` is the page.
 
 ## Privacy
 
-- Your video never leaves your computer. There is no server — this is a static page.
-- The only network request after the page loads is a single anonymous counter tick when a compression
-  finishes (`abacus.jasoncameron.dev`, a public hit counter), so the "videos shrunk" tally on the page can be honest.
-  Nothing about you or your file is sent — not the name, size, duration, or contents. It's disabled when running locally.
-- Fonts load from Google Fonts. The page is a PWA and keeps working offline once loaded.
+The page is static. There is no server that receives files.
+
+When a compression finishes, the page sends one request to a public hit counter (abacus.jasoncameron.dev) to
+increment a number. The request contains no information about the file or the user. The "videos compressed"
+count on the page reads from the same counter. The request is not sent when the page is served from localhost.
+
+Fonts are loaded from Google Fonts. The page registers a service worker and works offline after the first load.
 
 ## Browser support
 
-Chrome, Edge, Brave, Arc, Opera, Safari 17+ (desktop and iOS), Firefox 130+. Requires WebCodecs with an
-H.264 encoder; the page tells you if your browser can't.
+Chrome, Edge, Brave, Arc, Opera, Safari 17 or later, and Firefox 130 or later. WebCodecs with an H.264 encoder
+is required; the page shows a notice if the browser does not have it. If the browser cannot encode AAC, audio
+is encoded as Opus instead.
 
-## Run it locally
+## Running locally
 
 ```sh
 git clone https://github.com/asharahmed/shrinkray
 cd shrinkray
-python3 -m http.server 8123   # any static server works
+python3 -m http.server 8123   # any static file server works
 open http://127.0.0.1:8123/
 ```
 
+## Tests
+
 ```sh
-npm test   # unit tests for the planning math
+npm test               # planning math
+npm run fixtures       # generates test videos with ffmpeg into test/fixtures
+npm run test:browser   # runs the fixtures through headless Chrome and checks the output with ffprobe
 ```
 
-The vendored `vendor/mediabunny.min.mjs` is [mediabunny](https://github.com/vanilagy/mediabunny) (MPL-2.0).
+`test:browser` needs Google Chrome (or `CHROME=/path/to/chrome`) and ffprobe on the PATH.
 
-## Why this exists
+## Reporting problems
 
-"File too large" is a daily annoyance — Discord's 10 MB, Gmail's real ~18 MB, a school portal's 25 MB — and every
-"free online video compressor" makes you upload the whole file to someone's server, wait, and trust them with it.
-Modern browsers can encode H.264 in hardware. There's no reason the file should leave your machine.
-
-Found a file that breaks it? [Open an issue](https://github.com/asharahmed/shrinkray/issues) with your browser and the file's format.
+If a file does not convert, [open an issue](https://github.com/asharahmed/shrinkray/issues) with the browser
+version and what produced the file (phone model, screen recorder, etc.).
 
 ## License
 
-MIT © Ashar Ahmed
+MIT. The vendored `vendor/mediabunny.min.mjs` is [mediabunny](https://github.com/vanilagy/mediabunny), MPL-2.0.

@@ -159,6 +159,6 @@ test('a file already under the target is not re-encoded', { skip }, async () => 
   const page = await browser.newPage();
   const r = await runFile(page, 'vp9-720p.webm', { targetMb: 50 });
   assert.equal(r.skipped, true);
-  assert.match(r.status, /under your 50\.0 MB target/);
+  assert.match(r.status, /under the 50\.0 MB limit/);
   await page.close();
 });

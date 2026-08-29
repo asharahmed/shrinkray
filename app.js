@@ -202,7 +202,7 @@ async function runJob(job) {
   let lastAttempt = 0;
 
   const onStatus = ({ phase, attempt, progress, plan }) => {
-    if (phase === 'probing') { setProgress(job, null, 'indeterminate'); setStatus(job, 'Reading the file…'); return; }
+    if (phase === 'probing') { setProgress(job, null, 'indeterminate'); setStatus(job, 'Reading the file'); return; }
     if (phase === 'done') return;
     if (attempt !== lastAttempt) { lastAttempt = attempt; t0 = performance.now(); }
     lastProgress = progress ?? 0;
@@ -213,8 +213,8 @@ async function runJob(job) {
     const pct = `${Math.round(lastProgress * 100)}%`;
     const left = eta != null ? ` · ~${formatDuration(eta)} left` : '';
     setStatus(job, phase === 'retrying'
-      ? `Overshot — tightening to ${formatBps(plan.videoBps)}, pass ${attempt} of 3 · ${pct}${left}`
-      : `Encoding ${desc} — ${pct}${left}`);
+      ? `Over the limit; pass ${attempt} of 3 at ${formatBps(plan.videoBps)} · ${pct}${left}`
+      : `Encoding ${desc} · ${pct}${left}`);
   };
 
   try {
@@ -228,7 +228,7 @@ async function runJob(job) {
 
     if (res.skipped) {
       setProgress(job, 1, 'done');
-      setStatus(job, `Already ${formatBytes(file.size)} — that's under your ${formatBytes(targetBytes)} target. Send it as is.`);
+      setStatus(job, `This file is ${formatBytes(file.size)}, under the ${formatBytes(targetBytes)} limit. No compression needed.`);
       $('.job-result', el).hidden = false;
       $('.ticket', el).hidden = true;
       $('.ticket-sub', el).textContent = '';
@@ -258,16 +258,16 @@ async function runJob(job) {
       formatBps(plan.videoBps),
       codec === 'avc' ? 'H.264' : codec.toUpperCase(),
       plan.mute ? 'no audio' : null,
-      `${formatDuration(ms / 1000)} on your device`,
+      formatDuration(ms / 1000),
       attempt > 1 ? `${attempt} passes` : null,
       software ? 'software encoder' : null,
     ].filter(Boolean);
     const sub = $('.ticket-sub', el);
     sub.textContent = bits.join(' · ');
     if (!fits) {
-      sub.insertAdjacentHTML('beforeend', ` <span class="warn">Still over ${formatBytes(targetBytes)} after 3 passes — this is the closest. Try trimming, or a lower max resolution.</span>`);
+      sub.insertAdjacentHTML('beforeend', ` <span class="warn">Still over ${formatBytes(targetBytes)} after 3 passes. Trim the video or set a lower max resolution in Options.</span>`);
     } else if (plan.impossible) {
-      sub.insertAdjacentHTML('beforeend', ` <span class="warn">That's a very tight budget for ${formatDuration(info.duration)} of video — expect soft frames. Trimming helps most.</span>`);
+      sub.insertAdjacentHTML('beforeend', ` <span class="warn">${formatDuration(info.duration)} of video at this size will look soft. Trimming helps.</span>`);
     }
     const dl = $('.dl', el);
     dl.hidden = false;

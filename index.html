@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shrinkray — compress video in your browser. No upload, no account, no watermark.</title>
-<meta name="description" content="Make any video small enough to send: under 10 MB for Discord, 18 MB for email, or any size you pick. Compressed on your device with hardware-accelerated WebCodecs — your video never leaves your computer.">
+<title>Shrinkray: compress a video in your browser without uploading it</title>
+<meta name="description" content="Compress a video to under 10 MB, 18 MB, or any size you choose. Runs in your browser with WebCodecs. The file is not uploaded.">
 <meta name="theme-color" content="#f8f5ef">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta property="og:title" content="Shrinkray — make that video small">
-<meta property="og:description" content="Compress video to under 10 MB (Discord) or 18 MB (email) right in your browser. Nothing is uploaded.">
+<meta property="og:title" content="Shrinkray: compress a video in your browser">
+<meta property="og:description" content="Compress a video to under 10 MB (Discord), 18 MB (email), or any size. Runs in your browser; the file is not uploaded.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://asharahmed.github.io/shrinkray/og.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="canonical" href="https://asharahmed.github.io/shrinkray/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Shrinkray","applicationCategory":"MultimediaApplication","operatingSystem":"Any (web browser)","url":"https://asharahmed.github.io/shrinkray/","description":"Compress video to a target size (10 MB for Discord, 18 MB for email, or custom) entirely in your browser. Nothing is uploaded.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Ashar Ahmed"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Shrinkray","applicationCategory":"MultimediaApplication","operatingSystem":"Any (web browser)","url":"https://asharahmed.github.io/shrinkray/","description":"Compress a video to a target size (10 MB for Discord, 18 MB for email, or custom) in the browser. The file is not uploaded.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Ashar Ahmed"}}</script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -29,7 +29,7 @@
     Shrinkray
   </a>
   <nav class="top-links">
-    <span class="tally" id="tally" hidden><b id="tallyNum">0</b> videos shrunk so far</span>
+    <span class="tally" id="tally" hidden><b id="tallyNum">0</b> videos compressed</span>
     <a href="https://github.com/asharahmed/shrinkray">Open source</a>
   </nav>
 </header>
@@ -37,7 +37,7 @@
 <main>
   <section class="hero">
     <h1>Make that video <span class="small-word">small<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 10 C 40 2, 120 2, 197 8"/></svg></span>.</h1>
-    <p class="lede">Under 10 MB for Discord. Under 18 MB for email. Whatever size you need. It's compressed right here on your device with your browser's own hardware encoder — <strong>nothing is uploaded</strong>, ever.</p>
+    <p class="lede">Set a size limit, add a video, and download an MP4 that fits. Your browser does the encoding on this computer. <strong>The file is not uploaded.</strong></p>
   </section>
 
   <section class="target" aria-labelledby="targetLabel">
@@ -61,14 +61,14 @@
     <div class="beam" aria-hidden="true"></div>
     <div class="drop-inner">
       <p class="drop-title">Drop a video here</p>
-      <p class="drop-or"><button type="button" class="btn btn-primary" id="chooseBtn">Choose a video</button> <span>MP4, MOV, WebM, MKV · any size</span></p>
-      <p class="drop-fine">Stays on this device. Works offline once loaded.</p>
+      <p class="drop-or"><button type="button" class="btn btn-primary" id="chooseBtn">Choose a video</button> <span>MP4, MOV, WebM, MKV</span></p>
+      <p class="drop-fine">The file stays on this device. Works offline after the first load.</p>
     </div>
     <input type="file" id="fileInput" accept="video/*,.mkv,.mov,.mp4,.webm,.m4v" multiple hidden>
   </section>
 
   <p class="unsupported" id="unsupported" hidden>
-    <strong>This browser can't encode video yet.</strong> Shrinkray uses WebCodecs, which works in Chrome, Edge, Brave, Arc, Opera, Safari 17+ and Firefox 130+. Open this page in one of those and you're set — still no upload, still free.
+    <strong>This browser cannot encode video.</strong> Shrinkray needs WebCodecs, which is available in Chrome, Edge, Brave, Arc, Opera, Safari 17 or later, and Firefox 130 or later.
   </p>
 
   <details class="options" id="options">
@@ -90,23 +90,23 @@
       <label>
         <span>Frame rate</span>
         <select id="optFps">
-          <option value="auto">Auto (halve 60 fps when bits are tight)</option>
+          <option value="auto">Auto (60 fps becomes 30 fps if needed)</option>
           <option value="keep">Keep the original</option>
         </select>
       </label>
       <label>
         <span>Audio</span>
         <select id="optAudio">
-          <option value="auto">Keep (AAC, sized to budget)</option>
+          <option value="auto">Keep</option>
           <option value="mute">Remove audio</option>
         </select>
       </label>
       <label>
         <span>Video codec</span>
         <select id="optCodec">
-          <option value="avc">H.264 — plays everywhere</option>
-          <option value="hevc">HEVC — smaller, Apple-friendly</option>
-          <option value="av1">AV1 — smallest, slow, patchy support</option>
+          <option value="avc">H.264 (widest playback support)</option>
+          <option value="hevc">HEVC (smaller files; Apple devices)</option>
+          <option value="av1">AV1 (smallest files; slow; limited playback support)</option>
         </select>
       </label>
       <label>
@@ -118,7 +118,7 @@
         <input type="number" id="optTrimEnd" min="0" step="0.1" placeholder="end">
       </label>
     </div>
-    <p class="options-fine">Trim applies to the next video you add. Everything else applies to all of them.</p>
+    <p class="options-fine">Trim applies to the next video you add. The other options apply to every video.</p>
   </details>
 
   <section class="jobs" id="jobs" aria-live="polite" aria-label="Your videos"></section>
@@ -127,30 +127,30 @@
     <div class="about-col">
       <h2>How it works</h2>
       <ol>
-        <li><b>Read.</b> The file is parsed in your browser — headers, frame rate, tracks.</li>
-        <li><b>Plan.</b> Shrinkray picks a bitrate that lands under your target, dropping resolution or frame rate only when it has to.</li>
-        <li><b>Encode.</b> Your browser's WebCodecs encoder (usually the GPU) writes a new MP4. If it overshoots, it tightens up and goes again.</li>
+        <li>The file is parsed in your browser: container, tracks, frame rate, duration.</li>
+        <li>The size limit is converted into a bitrate. Resolution or frame rate is reduced only if the bitrate would be too low for the source.</li>
+        <li>The browser's WebCodecs encoder writes a new MP4. If the result is over the limit, it is encoded again at a lower bitrate.</li>
       </ol>
     </div>
     <div class="about-col">
-      <h2>Your video stays yours</h2>
-      <p>No upload, no account, no watermark, no size limit, no queue behind someone else's 4K wedding video. The only network request after the page loads is one anonymous counter tick when a compression finishes — a single number, so the tally above can be honest. No file names, sizes, or contents are sent anywhere.</p>
-      <p>It's <a href="https://github.com/asharahmed/shrinkray">open source</a>. Read the code, or run it from your own computer.</p>
+      <h2>Privacy</h2>
+      <p>The file is not uploaded. There is no server. After the page loads, the only network request is a hit-counter increment when a compression finishes. It carries no information about the file or about you.</p>
+      <p>The code is <a href="https://github.com/asharahmed/shrinkray">open source</a> and can be run from your own computer.</p>
     </div>
     <div class="about-col">
       <h2>Fine print</h2>
-      <details><summary>Why 18 MB for email, not 25?</summary><p>Gmail, Outlook and iCloud advertise 25 MB, but attachments are base64-encoded in transit, which adds about a third. A 25 MB video becomes a 33 MB message and bounces. 18 MB lands safely.</p></details>
-      <details><summary>Why did it lower the resolution?</summary><p>Because at your target size there weren't enough bits per pixel to keep the frame clean. Smaller-but-sharp beats big-and-blocky. Force a resolution in Options if you disagree.</p></details>
-      <details><summary>It came out a bit under the target. Why not exactly?</summary><p>Hardware encoders don't hit a bitrate precisely, so Shrinkray aims 7% low and re-encodes if it overshoots. Under is the point.</p></details>
-      <details><summary>Which browsers?</summary><p>Chrome, Edge, Brave, Arc, Opera and Safari 17+ on desktop and phone; Firefox 130+. Older Firefox and some Linux builds can't encode H.264 — the page will tell you.</p></details>
-      <details><summary>Something broke.</summary><p><a href="https://github.com/asharahmed/shrinkray/issues">Open an issue</a> with your browser and the file's format. Real reports fix real bugs.</p></details>
+      <details><summary>Why 18 MB for email, not 25?</summary><p>Gmail, Outlook and iCloud accept messages up to 25 MB, but attachments are base64-encoded in transit, which adds about a third. A 25 MB video becomes a 33 MB message and is rejected. 18 MB arrives.</p></details>
+      <details><summary>Why did it lower the resolution?</summary><p>At the chosen size there were not enough bits per pixel to keep the original resolution looking acceptable. You can force a resolution in Options.</p></details>
+      <details><summary>The result is under the limit. Why not exactly at it?</summary><p>Hardware encoders do not hit a bitrate exactly, so the first pass aims 7% under the limit. If it overshoots, the video is encoded again at a lower bitrate.</p></details>
+      <details><summary>Which browsers?</summary><p>Chrome, Edge, Brave, Arc, Opera, and Safari 17 or later, on desktop and phone. Firefox 130 or later. Some Linux builds cannot encode H.264; the page shows a notice if so.</p></details>
+      <details><summary>A file did not convert.</summary><p><a href="https://github.com/asharahmed/shrinkray/issues">Open an issue</a> with your browser version and what produced the file.</p></details>
     </div>
   </section>
 </main>
 
 <footer class="foot">
   <span>Shrinkray · MIT · <a href="https://github.com/asharahmed/shrinkray">GitHub</a></span>
-  <span>Built on <a href="https://mediabunny.dev">mediabunny</a> and WebCodecs.</span>
+  <span>Uses <a href="https://mediabunny.dev">mediabunny</a> and WebCodecs.</span>
 </footer>
 
 <template id="jobTpl">
@@ -168,7 +168,7 @@
       <p class="job-actions">
         <a class="btn btn-primary dl" download>Download</a>
         <button type="button" class="btn btn-ghost preview">Preview</button>
-        <button type="button" class="btn btn-ghost again" hidden>Shrink anyway</button>
+        <button type="button" class="btn btn-ghost again" hidden>Compress anyway</button>
       </p>
       <video class="job-video" controls playsinline hidden></video>
     </div>

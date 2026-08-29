@@ -5,9 +5,9 @@ export const MB = 1_000_000; // decimal megabytes: what Discord, Gmail & Finder/
 
 export const PRESETS = [
   { id: 'discord', label: 'Discord', bytes: 10 * MB, note: 'Free-tier upload limit is 10 MB.' },
-  { id: 'email', label: 'Email', bytes: 18 * MB, note: 'Gmail says 25 MB, but it counts the attachment after encoding (+33%). 18 MB is the real ceiling.' },
-  { id: 'nitro', label: '50 MB', bytes: 50 * MB, note: 'Discord Nitro Basic, most chat apps.' },
-  { id: 'big', label: '100 MB', bytes: 100 * MB, note: 'iMessage, Slack, LMS uploads.' },
+  { id: 'email', label: 'Email', bytes: 18 * MB, note: 'Email providers accept 25 MB, but attachments grow by a third in transit. 18 MB is safe.' },
+  { id: 'nitro', label: '50 MB', bytes: 50 * MB, note: 'Discord Nitro Basic and most chat apps.' },
+  { id: 'big', label: '100 MB', bytes: 100 * MB, note: 'iMessage, Slack, and most upload forms.' },
 ];
 
 // Standard heights we are willing to scale down to (largest first).

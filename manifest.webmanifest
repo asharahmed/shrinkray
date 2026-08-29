@@ -1,7 +1,7 @@
 {
-  "name": "Shrinkray — compress video in your browser",
+  "name": "Shrinkray",
   "short_name": "Shrinkray",
-  "description": "Make any video small enough to send. Compressed on your device, nothing uploaded.",
+  "description": "Compress a video to a target size in your browser. The file is not uploaded.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
