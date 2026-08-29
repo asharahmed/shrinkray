@@ -1,0 +1,21 @@
+{
+  "name": "shrinkray",
+  "version": "0.1.0",
+  "description": "Compress video in your browser. No upload, no account, no watermark.",
+  "scripts": {
+    "test": "node --test test/plan.test.js",
+    "test:browser": "node --test test/browser.test.js",
+    "fixtures": "sh test/make-fixtures.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "mediabunny": "^1.55.3"
+  },
+  "private": true,
+  "devDependencies": {
+    "puppeteer-core": "^25.9.0"
+  }
+}
