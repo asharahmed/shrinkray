@@ -4,7 +4,7 @@ import { shrink, isSupported, probe } from './shrink.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const ABACUS = 'https://abacus.jasoncameron.dev';
-const NS = 'shrinkray';
+const NS = 'shrinkray-app';
 const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
 
 // ---------------------------------------------------------------- telemetry
@@ -14,7 +14,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
 function tick(key, { once = false } = {}) {
-  if (isLocal && !location.search.includes('telemetry')) return;
+  if (isLocal && !location.search.includes('telemetry=1')) return; // dev: off unless ?telemetry=1
   if (once) {
     if (store.get(`sr:${key}`)) return;
     store.set(`sr:${key}`, '1');

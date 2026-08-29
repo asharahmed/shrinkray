@@ -4,6 +4,8 @@
 
 **→ https://asharahmed.github.io/shrinkray/**
 
+![Shrinkray: 96.2 MB → 9.22 MB, 1080p, 2.3 s on your device](docs/shot-result.png)
+
 Pick a target — 10 MB for Discord, 18 MB for email, or any number — drop in a video, download the result.
 The whole thing runs on your device using WebCodecs (your browser's hardware video encoder), so a
 300 MB clip doesn't have to crawl up your connection to some server first, and nobody else ever holds your file.
